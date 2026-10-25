@@ -44,3 +44,7 @@ Open the local address printed in the terminal. Adding or removing media require
 4. Commit and push new media files and `media.config.json` changes to publish gallery updates.
 
 Media placed in `public/media` is included in the deployment. For large collections or frequent uploads, use object storage (such as Vercel Blob) rather than committing large video files to Git.
+
+## Discord visit notifications
+
+Create a webhook for the Discord channel where visit notices should appear, then add its URL to the Vercel project as the server-only environment variable `DISCORD_WEBHOOK_URL`. Redeploy after saving it. The site sends a notification on each page load with an approximate device, operating system, browser, and local time. It does not send IP addresses or persistent visitor IDs. Exact phone models are not always available from browsers.

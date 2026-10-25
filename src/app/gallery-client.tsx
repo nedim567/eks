@@ -87,8 +87,15 @@ export default function GalleryClient({ items }: { items: MediaItem[] }) {
   const [lightboxItem, setLightboxItem] = useState<MediaItem | null>(null);
   const [visibleCount, setVisibleCount] = useState(pageSize);
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const visitSentRef = useRef(false);
   const mediaItems = useMemo(() => items, [items]);
   const visibleItems = mediaItems.slice(0, visibleCount);
+
+  useEffect(() => {
+    if (visitSentRef.current) return;
+    visitSentRef.current = true;
+    void fetch("/api/visit", { method: "POST", keepalive: true }).catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (visibleCount >= mediaItems.length || !sentinelRef.current) return;
