@@ -1,6 +1,6 @@
 # Still / Motion
 
-A small, polished photo and video gallery built with Next.js. Add files to `public/media` and the site discovers them automatically. The gallery stays at two columns on both mobile and desktop. Photos and videos open in an on-page full-size viewer; videos start playing there.
+A small, polished photo and video gallery built with Next.js. Add files to `public/media` and the site discovers them automatically. The gallery stays at two columns on both mobile and desktop. Photos and videos open in an on-page full-size viewer; videos start playing there. Media counts appear below the title, and more items load automatically as visitors scroll.
 
 ## Add your media
 

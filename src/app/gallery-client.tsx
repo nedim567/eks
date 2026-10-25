@@ -1,14 +1,58 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { MediaItem } from "@/lib/media";
 
 const displayName = (filename: string) => filename.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ").replace(/\s+/g, " ").trim();
+const pageSize = 12;
 
 function VideoThumbnail({ src, label, onOpen }: { src: string; label: string; onOpen: () => void }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const thumbnailRef = useRef<HTMLDivElement>(null);
+  const [shouldLoad, setShouldLoad] = useState(false);
+  const [poster, setPoster] = useState<string | null>(null);
+
+  useEffect(() => {
+    const target = thumbnailRef.current;
+    if (!target || shouldLoad) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setShouldLoad(true);
+        observer.disconnect();
+      }
+    }, { rootMargin: "300px 0px" });
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [shouldLoad]);
+
+  const captureFrame = () => {
+    const video = videoRef.current;
+    if (!video || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA || !video.videoWidth || !video.videoHeight) return;
+    const scale = Math.min(1, 900 / video.videoWidth);
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(video.videoWidth * scale);
+    canvas.height = Math.round(video.videoHeight * scale);
+    const context = canvas.getContext("2d");
+    if (!context) return;
+    try {
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      setPoster(canvas.toDataURL("image/jpeg", 0.76));
+    } catch {
+      // Keep the video's own frame as the thumbnail if the browser cannot capture it.
+    }
+  };
+
+  const seekToThumbnailFrame = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (Number.isFinite(video.duration) && video.duration > 0) video.currentTime = Math.min(0.8, video.duration * 0.1);
+    else captureFrame();
+  };
+
   return (
-    <div className="video-thumb">
-      <video src={src} playsInline preload="metadata" aria-label={label} />
+    <div ref={thumbnailRef} className={`video-thumb${poster ? " has-poster" : ""}`}>
+      <video ref={videoRef} src={shouldLoad ? src : undefined} playsInline preload="metadata" aria-label={label} onLoadedMetadata={seekToThumbnailFrame} onLoadedData={captureFrame} onSeeked={captureFrame} />
+      {poster && <img className="video-poster" src={poster} alt="" aria-hidden="true" />}
       <button className="video-play" type="button" onClick={onOpen} aria-label={`Play ${label}`}><span className="video-play-icon">▶</span></button>
     </div>
   );
@@ -41,7 +85,21 @@ function MediaCard({
 
 export default function GalleryClient({ items }: { items: MediaItem[] }) {
   const [lightboxItem, setLightboxItem] = useState<MediaItem | null>(null);
+  const [visibleCount, setVisibleCount] = useState(pageSize);
+  const sentinelRef = useRef<HTMLDivElement>(null);
   const mediaItems = useMemo(() => items, [items]);
+  const visibleItems = mediaItems.slice(0, visibleCount);
+
+  useEffect(() => {
+    if (visibleCount >= mediaItems.length || !sentinelRef.current) return;
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) {
+        setVisibleCount((current) => Math.min(current + pageSize, mediaItems.length));
+      }
+    }, { rootMargin: "450px 0px" });
+    observer.observe(sentinelRef.current);
+    return () => observer.disconnect();
+  }, [mediaItems.length, visibleCount]);
 
   useEffect(() => {
     if (!lightboxItem) return;
@@ -66,7 +124,10 @@ export default function GalleryClient({ items }: { items: MediaItem[] }) {
   return (
     <>
       <section className="gallery-section" id="gallery" aria-label="Gallery">
-        {items.length > 0 ? <div className="gallery-grid">{items.map((item) => <MediaCard key={item.name} item={item} onOpen={setLightboxItem} />)}</div> : (
+        {items.length > 0 ? <>
+          <div className="gallery-grid">{visibleItems.map((item) => <MediaCard key={item.name} item={item} onOpen={setLightboxItem} />)}</div>
+          {visibleCount < items.length && <div className="gallery-pagination"><button type="button" className="load-more" onClick={() => setVisibleCount((current) => Math.min(current + pageSize, items.length))}>Load more</button><div ref={sentinelRef} className="pagination-sentinel" aria-hidden="true" /></div>}
+        </> : (
           <div className="empty-state"><span className="empty-icon">✳</span><h3>Your gallery starts here.</h3><p>Drop photos and videos into <code>public/media</code>, then refresh the page.</p><span className="empty-formats">JPG · PNG · WEBP · MP4 · WEBM · MOV</span></div>
         )}
       </section>
