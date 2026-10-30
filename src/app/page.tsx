@@ -24,7 +24,7 @@ export default function Home() {
         <div className="hero-copy"><h1>{title}</h1>{subtitle.trim() && <p className="hero-subtitle">{subtitle}</p>}<div className="media-counts"><span><strong>{photoCount}</strong> PHOTOS</span><span><strong>{videoCount}</strong> VIDEOS</span></div></div>
       </section>
       <GalleryClient items={items} />
-      <footer className="footer"><span className="privacy-note">Osnovni podaci o uređaju i browseru bilježe se pri posjeti.</span><a href="#top">BACK TO TOP ↑</a></footer>
+      <footer className="footer"><span className="privacy-note">Bilježe se osnovni podaci o browseru pri posjeti i koji su mediji otvoreni.</span><a href="#top">BACK TO TOP ↑</a></footer>
     </main>
   );
 }

@@ -45,6 +45,10 @@ Open the local address printed in the terminal. Adding or removing media require
 
 Media placed in `public/media` is included in the deployment. For large collections or frequent uploads, use object storage (such as Vercel Blob) rather than committing large video files to Git.
 
-## Discord visit notifications
+## Discord visit and media-view notifications
 
-Create a webhook for the Discord channel where visit notices should appear, then add its URL to the Vercel project as the server-only environment variable `DISCORD_WEBHOOK_URL`. Redeploy after saving it. The site sends a notification on each page load with an approximate device, operating system, browser, and local time. It does not send IP addresses or persistent visitor IDs. Exact phone models are not always available from browsers.
+Create a Discord webhook for the channel where notices should appear, then add its URL to the Vercel project as the server-only environment variable `DISCORD_WEBHOOK_URL`.
+
+To keep view totals across deployments, connect an Upstash Redis database to the Vercel project and set `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` in the project's environment variables. You can use the same names in a local `.env.local` file (see `.env.example`). Redeploy after adding or changing environment variables.
+
+Every time a visitor opens a photo or video, Discord receives a separate notice with a distinct 🖼️ or 🎬 icon and overall photo/video/combined totals. Photos appear directly as image previews in Discord, without showing their filenames. Videos include a frame thumbnail generated from the video and a clickable title that opens the exact video. Opening another item with the viewer arrows is counted as another view. Page-load notices include approximate device, operating system, browser, and local time. The site does not send IP addresses or persistent visitor IDs; exact phone models are not always available from browsers.
