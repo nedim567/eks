@@ -65,7 +65,8 @@ export async function POST(request: NextRequest) {
     if (videoPreview.length > 320_000) return NextResponse.json({ error: "Video preview too large" }, { status: 413 });
   }
   const { featured, gallery } = getGalleryData();
-  if (![...featured, ...gallery].some((item) => item.name === name && item.type === type)) {
+  const media = [...featured, ...gallery].find((item) => item.name === name && item.type === type);
+  if (!media) {
     return NextResponse.json({ error: "Media not found" }, { status: 404 });
   }
 
