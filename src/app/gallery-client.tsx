@@ -6,6 +6,22 @@ import type { MediaItem } from "@/lib/media";
 const displayName = (filename: string) => filename.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ").replace(/\s+/g, " ").trim();
 const pageSize = 12;
 
+type NavigatorWithUserAgentData = Navigator & {
+  userAgentData?: {
+    getHighEntropyValues?: (hints: string[]) => Promise<{ model?: string }>;
+  };
+};
+
+async function getReportedDeviceModel() {
+  try {
+    const userAgentData = (navigator as NavigatorWithUserAgentData).userAgentData;
+    const values = await userAgentData?.getHighEntropyValues?.(["model"]);
+    return values?.model?.trim().slice(0, 80) || undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 function VideoThumbnail({ src, label, onOpen, onPoster }: { src: string; label: string; onOpen: (preview?: string) => void; onPoster: (preview: string) => void }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const thumbnailRef = useRef<HTMLDivElement>(null);
@@ -115,7 +131,12 @@ export default function GalleryClient({ items }: { items: MediaItem[] }) {
   useEffect(() => {
     if (visitSentRef.current) return;
     visitSentRef.current = true;
-    void fetch("/api/visit", { method: "POST", keepalive: true }).catch(() => {});
+    void getReportedDeviceModel().then((deviceModel) => fetch("/api/visit", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ deviceModel }),
+      keepalive: true,
+    })).catch(() => {});
   }, []);
 
   useEffect(() => {

@@ -44,6 +44,15 @@ export async function POST(request: NextRequest) {
   }
 
   const userAgent = request.headers.get("user-agent") ?? "";
+  let deviceModel = "";
+  try {
+    const body = await request.json() as { deviceModel?: unknown };
+    if (typeof body.deviceModel === "string") {
+      deviceModel = body.deviceModel.replace(/[\r\n\u0000-\u001f]/g, " ").trim().slice(0, 80);
+    }
+  } catch {
+    // Use the model information available in the User-Agent header when no client hint is sent.
+  }
   const ipAddress = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "Nije dostupna";
   const time = new Intl.DateTimeFormat("bs-BA", {
     dateStyle: "medium",
@@ -55,7 +64,7 @@ export async function POST(request: NextRequest) {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
-      content: `🌐 **Nova posjeta galeriji**\n🌐 IP adresa: ${ipAddress}\n📱 Uređaj: ${getDevice(userAgent)}\n🧭 Sistem: ${getOperatingSystem(userAgent)}\n🌍 Browser: ${getBrowser(userAgent)}\n🕒 Vrijeme: ${time}`,
+      content: `🌐 **Nova posjeta galeriji**\n🌐 IP adresa: ${ipAddress}\n📱 Uređaj/model: ${deviceModel || getDevice(userAgent)}\n🧭 Sistem: ${getOperatingSystem(userAgent)}\n🌍 Browser: ${getBrowser(userAgent)}\n🕒 Vrijeme: ${time}`,
       allowed_mentions: { parse: [] },
     }),
     cache: "no-store",
