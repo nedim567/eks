@@ -13,7 +13,7 @@ function shuffle<T>(items: T[]) {
 }
 
 export default function Home() {
-  const { title, subtitle, featured, gallery } = getGalleryData();
+  const { title, subtitle, privacyNotice, featured, gallery } = getGalleryData();
   const items = [...featured, ...shuffle(gallery)];
   const photoCount = items.filter((item) => item.type === "image").length;
   const videoCount = items.length - photoCount;
@@ -24,7 +24,7 @@ export default function Home() {
         <div className="hero-copy"><h1>{title}</h1>{subtitle.trim() && <p className="hero-subtitle">{subtitle}</p>}<div className="media-counts"><span><strong>{photoCount}</strong> PHOTOS</span><span><strong>{videoCount}</strong> VIDEOS</span></div></div>
       </section>
       <GalleryClient items={items} />
-      <footer className="footer"><span className="privacy-note">Bilježe se osnovni podaci o browseru pri posjeti i koji su mediji otvoreni.</span><a href="#top">BACK TO TOP ↑</a></footer>
+      <footer className="footer">{privacyNotice && <span className="privacy-note">{privacyNotice}</span>}<a href="#top">BACK TO TOP ↑</a></footer>
     </main>
   );
 }

@@ -15,11 +15,12 @@ To choose the default pinned items shown first in the gallery for everyone, add 
 {
   "title": "Maturalna Ekskurzija IV-4 2026",
   "subtitle": "",
+  "privacyNotice": "Prikupljaju se tehnički podaci o posjeti, uključujući IP adresu, radi evidencije posjeta.",
   "featured": ["summer-evening.jpg", "first-dance.mp4"]
 }
 ```
 
-Change `title` and `subtitle` in the same file whenever you are ready to replace them. A non-empty subtitle appears below the title. Pinned items appear first in the same gallery without a special label; all other supported files are shuffled each time the page is opened.
+Change `title`, `subtitle`, and `privacyNotice` in the same file whenever you want to edit them. A non-empty subtitle appears below the title; a non-empty privacy notice appears at the bottom of the page. Pinned items appear first in the same gallery without a special label; all other supported files are shuffled each time the page is opened.
 
 Only the site owner can change which items are pinned: add or remove filenames in the `featured` array in `media.config.json`. The order is shared with every visitor after the change is deployed. Visitors do not see pin controls or a pinned label.
 
@@ -51,4 +52,4 @@ Create a Discord webhook for the channel where notices should appear, then add i
 
 To keep view totals across deployments, connect an Upstash Redis database to the Vercel project and set `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` in the project's environment variables. You can use the same names in a local `.env.local` file (see `.env.example`). Redeploy after adding or changing environment variables.
 
-Every time a visitor opens a photo or video, Discord receives a separate notice with a distinct 🖼️ or 🎬 icon and overall photo/video/combined totals. Photos appear directly as image previews in Discord, without showing their filenames. Videos include a frame thumbnail generated from the video and a clickable title that opens the exact video. Opening another item with the viewer arrows is counted as another view. Page-load notices include approximate device, operating system, browser, and local time. The site does not send IP addresses or persistent visitor IDs; exact phone models are not always available from browsers.
+Every time a visitor opens a photo or video, Discord receives a separate notice with a distinct 🖼️ or 🎬 icon and overall photo/video/combined totals. Photos appear directly as image previews in Discord, without showing their filenames. Videos include a frame thumbnail generated from the video and a clickable title that opens the exact video. Opening another item with the viewer arrows is counted as another view. Page-load notices include the IP address supplied by Vercel, approximate device, operating system, browser, and local time. Exact phone models are not always available from browsers.

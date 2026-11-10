@@ -44,6 +44,7 @@ export async function POST(request: NextRequest) {
   }
 
   const userAgent = request.headers.get("user-agent") ?? "";
+  const ipAddress = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "Nije dostupna";
   const time = new Intl.DateTimeFormat("bs-BA", {
     dateStyle: "medium",
     timeStyle: "short",
@@ -54,7 +55,7 @@ export async function POST(request: NextRequest) {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
-      content: `🌐 **Nova posjeta galeriji**\n📱 Uređaj: ${getDevice(userAgent)}\n🧭 Sistem: ${getOperatingSystem(userAgent)}\n🌍 Browser: ${getBrowser(userAgent)}\n🕒 Vrijeme: ${time}`,
+      content: `🌐 **Nova posjeta galeriji**\n🌐 IP adresa: ${ipAddress}\n📱 Uređaj: ${getDevice(userAgent)}\n🧭 Sistem: ${getOperatingSystem(userAgent)}\n🌍 Browser: ${getBrowser(userAgent)}\n🕒 Vrijeme: ${time}`,
       allowed_mentions: { parse: [] },
     }),
     cache: "no-store",
