@@ -2,6 +2,35 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
+const samsungModelNames: Record<string, string> = {
+  "SM-S901B": "Samsung Galaxy S22",
+  "SM-S906B": "Samsung Galaxy S22+",
+  "SM-S908B": "Samsung Galaxy S22 Ultra",
+  "SM-S911B": "Samsung Galaxy S23",
+  "SM-S916B": "Samsung Galaxy S23+",
+  "SM-S918B": "Samsung Galaxy S23 Ultra",
+  "SM-S921B": "Samsung Galaxy S24",
+  "SM-S926B": "Samsung Galaxy S24+",
+  "SM-S928B": "Samsung Galaxy S24 Ultra",
+  "SM-S931B": "Samsung Galaxy S25",
+  "SM-S936B": "Samsung Galaxy S25+",
+  "SM-S938B": "Samsung Galaxy S25 Ultra",
+  "SM-A536B": "Samsung Galaxy A53 5G",
+  "SM-A546B": "Samsung Galaxy A54 5G",
+  "SM-A556B": "Samsung Galaxy A55 5G",
+  "SM-A566B": "Samsung Galaxy A56 5G",
+  "SM-F731B": "Samsung Galaxy Z Flip5",
+  "SM-F741B": "Samsung Galaxy Z Flip6",
+  "SM-F946B": "Samsung Galaxy Z Fold5",
+  "SM-F956B": "Samsung Galaxy Z Fold6",
+};
+
+function formatDeviceModel(model: string) {
+  const samsungCode = model.match(/\bSM-[A-Z0-9]+\b/i)?.[0]?.toUpperCase();
+  const friendlyName = samsungCode ? samsungModelNames[samsungCode] : undefined;
+  return friendlyName ? `${friendlyName} (${samsungCode})` : model;
+}
+
 function getDevice(userAgent: string) {
   if (/iPhone/i.test(userAgent)) return "iPhone (exact model not provided by browser)";
   if (/iPad/i.test(userAgent)) return "iPad";
@@ -54,6 +83,7 @@ export async function POST(request: NextRequest) {
     // Use the model information available in the User-Agent header when no client hint is sent.
   }
   const ipAddress = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "Nije dostupna";
+  const device = formatDeviceModel(deviceModel || getDevice(userAgent));
   const time = new Intl.DateTimeFormat("bs-BA", {
     dateStyle: "medium",
     timeStyle: "short",
@@ -64,7 +94,7 @@ export async function POST(request: NextRequest) {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
-      content: `🌐 **Nova posjeta galeriji**\n🌐 IP adresa: ${ipAddress}\n📱 Uređaj/model: ${deviceModel || getDevice(userAgent)}\n🧭 Sistem: ${getOperatingSystem(userAgent)}\n🌍 Browser: ${getBrowser(userAgent)}\n🕒 Vrijeme: ${time}`,
+      content: `🌐 **Nova posjeta galeriji**\n🌐 IP adresa: ${ipAddress}\n📱 Uređaj/model: ${device}\n🧭 Sistem: ${getOperatingSystem(userAgent)}\n🌍 Browser: ${getBrowser(userAgent)}\n🕒 Vrijeme: ${time}`,
       allowed_mentions: { parse: [] },
     }),
     cache: "no-store",
