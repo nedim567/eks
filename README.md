@@ -15,12 +15,13 @@ To choose the default pinned items shown first in the gallery for everyone, add 
 {
   "title": "Maturalna Ekskurzija IV-4 2026",
   "subtitle": "",
+  "description": "",
   "privacyNotice": "Prikupljaju se tehnički podaci o posjeti, uključujući IP adresu, radi evidencije posjeta.",
   "featured": ["summer-evening.jpg", "first-dance.mp4"]
 }
 ```
 
-Change `title`, `subtitle`, and `privacyNotice` in the same file whenever you want to edit them. A non-empty subtitle appears below the title; a non-empty privacy notice appears at the bottom of the page. Pinned items appear first in the same gallery without a special label; all other supported files are shuffled each time the page is opened.
+Change `title`, `subtitle`, `description`, and `privacyNotice` in the same file whenever you want to edit them. A non-empty subtitle appears below the title; a non-empty description appears below the subtitle in smaller text; a non-empty privacy notice appears at the bottom of the page. The title also displays vector flags for Italy, Monaco, and Spain. Pinned items appear first in the same gallery without a special label; all other supported files are shuffled each time the page is opened.
 
 Only the site owner can change which items are pinned: add or remove filenames in the `featured` array in `media.config.json`. The order is shared with every visitor after the change is deployed. Visitors do not see pin controls or a pinned label.
 

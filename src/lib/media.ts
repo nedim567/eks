@@ -17,6 +17,7 @@ export function getGalleryData() {
   const config = JSON.parse(fs.readFileSync(configPath, "utf8")) as {
     title?: string;
     subtitle?: string;
+    description?: string;
     privacyNotice?: string;
     featured?: string[];
   };
@@ -35,6 +36,7 @@ export function getGalleryData() {
   return {
     title: config.title || "Maturalna Ekskurzija IV-4 2026",
     subtitle: config.subtitle ?? "",
+    description: config.description ?? "",
     privacyNotice: config.privacyNotice ?? "Prikupljaju se tehnički podaci o posjeti, uključujući IP adresu, radi evidencije posjeta.",
     featured: items.filter((item) => item.featured),
     gallery: items.filter((item) => !item.featured),
