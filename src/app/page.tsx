@@ -5,20 +5,23 @@ export const dynamic = "force-dynamic";
 
 function CountryFlags() {
   return (
-    <span className="title-flags" role="group" aria-label="Italy, Monaco, and Spain">
+    <span className="title-flags" role="group" aria-label="Italy, France, Monaco, and Spain">
       <svg className="title-flag title-flag-italy" viewBox="0 0 90 60" role="img" aria-label="Italy">
         <rect width="30" height="60" fill="#009246" />
         <rect x="30" width="30" height="60" fill="#fff" />
         <rect x="60" width="30" height="60" fill="#ce2b37" />
       </svg>
-      <svg className="title-flag title-flag-monaco" viewBox="0 0 80 100" role="img" aria-label="Monaco">
-        <rect width="80" height="50" fill="#ce1126" />
-        <rect y="50" width="80" height="50" fill="#fff" />
+      <svg className="title-flag title-flag-france" viewBox="0 0 90 60" role="img" aria-label="France">
+        <rect width="30" height="60" fill="#0055a4" />
+        <rect x="30" width="30" height="60" fill="#fff" />
+        <rect x="60" width="30" height="60" fill="#ef4135" />
+      </svg>
+      <svg className="title-flag title-flag-monaco" viewBox="0 0 90 60" role="img" aria-label="Monaco">
+        <rect width="90" height="30" fill="#ce1126" />
+        <rect y="30" width="90" height="30" fill="#fff" />
       </svg>
       <svg className="title-flag title-flag-spain" viewBox="0 0 90 60" role="img" aria-label="Spain">
-        <rect width="90" height="15" fill="#aa151b" />
-        <rect y="15" width="90" height="30" fill="#f1bf00" />
-        <rect y="45" width="90" height="15" fill="#aa151b" />
+        <image href="/flags/spain.svg" width="90" height="60" preserveAspectRatio="none" />
       </svg>
     </span>
   );
